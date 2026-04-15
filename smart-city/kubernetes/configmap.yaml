@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smart-city-config
+  namespace: smart-city
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KAFKA_RAW_TOPIC: "raw-sensor-data"
+  KAFKA_PROCESSED_TOPIC: "processed-sensor-data"
+  KAFKA_ALERTS_TOPIC: "sensor-alerts"
+  KAFKA_DLQ_TOPIC: "sensor-dlq"
+  STORAGE_SERVICE_URL: "http://storage-service:8003"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:8005"

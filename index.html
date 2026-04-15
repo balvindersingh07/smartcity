@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Smart City Monitoring Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <div class="bg-orb bg-orb--one"></div>
+    <div class="bg-orb bg-orb--two"></div>
+    <div class="bg-orb bg-orb--three"></div>
+
+    <div class="app-shell">
+      <aside class="sidebar glass-card">
+        <div class="sidebar__brand">
+          <div class="brand__logo">SC</div>
+          <div>
+            <h1>Smart City</h1>
+            <p>Command Center</p>
+          </div>
+        </div>
+
+        <nav class="sidebar__nav">
+          <button class="nav-item nav-item--active" data-target="topbarSection"><span>◈</span>Dashboard</button>
+          <button class="nav-item" data-target="sensorsSection"><span>◎</span>Sensors</button>
+          <button class="nav-item" data-target="alertsSection"><span>⚠</span>Alerts</button>
+          <button class="nav-item" data-target="reportsSection"><span>▣</span>Reports</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar glass-card" id="topbarSection">
+          <div>
+            <h2>Environmental Monitoring Dashboard</h2>
+            <p>Futuristic city intelligence for real-time operations</p>
+          </div>
+          <div class="topbar__chips">
+            <span class="chip">Live Sensor Grid</span>
+            <span class="chip chip--muted">Latency 1.2s</span>
+            <span class="chip chip--violet">3D View Enabled</span>
+          </div>
+        </header>
+
+        <div class="main-content">
+          <section class="metrics-grid" id="metricsGrid"></section>
+
+          <section class="content-grid">
+            <article class="panel glass-card map-panel">
+              <div class="panel__head">
+                <h3>Interactive City Map</h3>
+                <p>Neon sensor network and live station telemetry</p>
+              </div>
+              <div class="city-map" id="cityMap">
+                <div id="mapTooltip" class="map-tooltip" hidden></div>
+              </div>
+            </article>
+
+            <article class="panel glass-card alerts-panel" id="alertsSection">
+              <div class="panel__head">
+                <h3>Alerts Panel</h3>
+                <p>Critical, warning and normal incident feed</p>
+              </div>
+              <ul id="alertsList" class="alerts-list"></ul>
+            </article>
+          </section>
+
+          <section class="charts-grid">
+            <article class="panel glass-card chart-panel">
+              <div class="panel__head">
+                <h3>Temperature Trend</h3>
+                <p>Last 12 hours</p>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="temperatureChart"></canvas>
+              </div>
+            </article>
+
+            <article class="panel glass-card chart-panel">
+              <div class="panel__head">
+                <h3>AQI Trend</h3>
+                <p>Last 12 hours</p>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="aqiChart"></canvas>
+              </div>
+            </article>
+
+            <article class="panel glass-card chart-panel">
+              <div class="panel__head">
+                <h3>Noise Level by Zone</h3>
+                <p>Current average dB</p>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="noiseChart"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="bottom-grid">
+            <article class="panel glass-card" id="sensorsSection">
+              <div class="panel__head">
+                <h3>Sensors Table</h3>
+                <p>Station status, sync and health class</p>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Sensor ID</th>
+                      <th>Zone</th>
+                      <th>Status</th>
+                      <th>Last Sync</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sensorTableBody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel glass-card" id="reportsSection">
+              <div class="panel__head">
+                <h3>Notifications</h3>
+                <p>Recent control-room updates</p>
+              </div>
+              <ul id="notificationsList" class="notification-list"></ul>
+            </article>
+          </section>
+        </div>
+
+        <footer class="footer glass-card">
+          <span>Smart City Environmental Monitoring</span>
+          <span>Last sync: Live</span>
+        </footer>
+      </main>
+    </div>
+
+    <section id="toastStack" class="toast-stack" aria-live="polite" aria-label="Notifications"></section>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.3
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: smartcity
+      POSTGRES_USER: smartcity
+      POSTGRES_PASSWORD: smartcity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ingestion-service:
+    build: ./services/ingestion-service
+    depends_on:
+      - kafka
+    ports:
+      - "8001:8001"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_RAW_TOPIC: raw-sensor-data
+
+  processing-service:
+    build: ./services/processing-service
+    depends_on:
+      - kafka
+    ports:
+      - "8002:8002"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_RAW_TOPIC: raw-sensor-data
+      KAFKA_PROCESSED_TOPIC: processed-sensor-data
+      KAFKA_ALERTS_TOPIC: sensor-alerts
+      KAFKA_DLQ_TOPIC: sensor-dlq
+
+  storage-service:
+    build: ./services/storage-service
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8003:8003"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://smartcity:smartcity@postgres:5432/smartcity
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_PROCESSED_TOPIC: processed-sensor-data
+
+  notification-service:
+    build: ./services/notification-service
+    depends_on:
+      - kafka
+    ports:
+      - "8005:8005"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_ALERTS_TOPIC: sensor-alerts
+
+  api-service:
+    build: ./services/api-service
+    depends_on:
+      - storage-service
+      - notification-service
+    ports:
+      - "8004:8004"
+    environment:
+      STORAGE_SERVICE_URL: http://storage-service:8003
+      NOTIFICATION_SERVICE_URL: http://notification-service:8005
+
+volumes:
+  postgres_data:

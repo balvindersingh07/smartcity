@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: smart-city-sa
+  namespace: smart-city
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: smart-city-read-config
+  namespace: smart-city
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: smart-city-read-config-binding
+  namespace: smart-city
+subjects:
+  - kind: ServiceAccount
+    name: smart-city-sa
+roleRef:
+  kind: Role
+  name: smart-city-read-config
+  apiGroup: rbac.authorization.k8s.io

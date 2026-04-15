@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SensorEvent",
+  "type": "object",
+  "required": ["sensor_id", "type", "value", "timestamp"],
+  "properties": {
+    "sensor_id": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "type": {
+      "type": "string",
+      "enum": ["temperature", "humidity", "aqi", "noise"]
+    },
+    "value": {
+      "type": "number"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "location_id": {
+      "type": "string"
+    }
+  }
+}
