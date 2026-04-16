@@ -1,0 +1,171 @@
+name: Smart City CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - ingestion-service
+          - processing-service
+          - storage-service
+          - api-service
+          - notification-service
+    defaults:
+      run:
+        working-directory: smart-city/services/${{ matrix.service }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (where available)
+        run: |
+          if [ -d tests ]; then
+            pip install pytest
+            pytest -q
+          else
+            echo "No tests for ${{ matrix.service }}"
+          fi
+
+      - name: Build Docker image
+        run: docker build -t smart-city/${{ matrix.service }}:${{ github.sha }} .
+
+  publish-images:
+    runs-on: ubuntu-latest
+    needs: test-and-build
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        service:
+          - ingestion-service
+          - processing-service
+          - storage-service
+          - api-service
+          - notification-service
+    defaults:
+      run:
+        working-directory: smart-city/services/${{ matrix.service }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/smart-city-${{ matrix.service }}:${{ github.sha }} .
+
+      - name: Push image
+        run: docker push ghcr.io/${{ github.repository_owner }}/smart-city-${{ matrix.service }}:${{ github.sha }}
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: smart-city/frontend-react
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React frontend
+        run: npm run build
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [publish-images, frontend-build]
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context (staging)
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ secrets.AKS_RG_STAGING }}
+          cluster-name: ${{ secrets.AKS_CLUSTER_STAGING }}
+
+      - name: Deploy to staging
+        run: |
+          kubectl apply -f smart-city/kubernetes/namespace.yaml
+          kubectl apply -f smart-city/kubernetes/configmap.yaml
+          kubectl apply -f smart-city/kubernetes/rbac.yaml
+          kubectl apply -f smart-city/kubernetes/network-policies.yaml
+          kubectl apply -f smart-city/kubernetes/ingestion.yaml
+          kubectl apply -f smart-city/kubernetes/processing.yaml
+          kubectl apply -f smart-city/kubernetes/storage.yaml
+          kubectl apply -f smart-city/kubernetes/notification.yaml
+          kubectl apply -f smart-city/kubernetes/api.yaml
+          kubectl apply -f smart-city/kubernetes/hpa.yaml
+          kubectl apply -f smart-city/kubernetes/pdb.yaml
+          kubectl apply -f smart-city/kubernetes/ingress.yaml
+
+      - name: Run smoke test
+        shell: pwsh
+        run: ./smart-city/ci-cd/smoke-test.ps1
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context (production)
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ secrets.AKS_RG_PROD }}
+          cluster-name: ${{ secrets.AKS_CLUSTER_PROD }}
+
+      - name: Deploy to production
+        run: |
+          kubectl apply -f smart-city/kubernetes/namespace.yaml
+          kubectl apply -f smart-city/kubernetes/configmap.yaml
+          kubectl apply -f smart-city/kubernetes/rbac.yaml
+          kubectl apply -f smart-city/kubernetes/network-policies.yaml
+          kubectl apply -f smart-city/kubernetes/ingestion.yaml
+          kubectl apply -f smart-city/kubernetes/processing.yaml
+          kubectl apply -f smart-city/kubernetes/storage.yaml
+          kubectl apply -f smart-city/kubernetes/notification.yaml
+          kubectl apply -f smart-city/kubernetes/api.yaml
+          kubectl apply -f smart-city/kubernetes/hpa.yaml
+          kubectl apply -f smart-city/kubernetes/pdb.yaml
+          kubectl apply -f smart-city/kubernetes/ingress.yaml
