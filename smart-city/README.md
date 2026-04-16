@@ -26,12 +26,12 @@ smart-city/
 ├── kubernetes/
 ├── terraform/
 ├── ci-cd/
-└── docs/
+└── frontend-react/
 ```
 
 ## Phase Deliverables
 
-1. Architecture and requirements: `docs/phase-1-architecture.md`
+1. Architecture and requirements: covered in the submitted project report
 2. Service skeletons + Dockerfiles: `services/*`
 3. Kafka integration + event contracts: `kafka/` and service code
 4. Stream processing (filter, aggregate, anomaly): `processing-service/app/pipeline.py`
@@ -42,7 +42,6 @@ smart-city/
 9. Terraform baseline: `terraform/`
 10. Security + monitoring hooks: health endpoints, env secrets, RBAC manifests
 11. Production hardening: retries/backoff, DLQ, Prometheus metrics, Alembic, React starter
-12. Finalization assets: runbook, cost governance, submission checklist, walkthrough script
 
 ## Quick Start (Local)
 
@@ -80,14 +79,6 @@ cd frontend-react
 npm install
 npm run dev
 ```
-
-## Final Documentation Pack
-
-- `docs/final-submission-checklist.md`
-- `docs/operations-runbook.md`
-- `docs/cost-governance.md`
-- `docs/video-walkthrough-script.md`
-- `docs/phase-11-production-hardening.md`
 
 ## Example Ingest Request
 
