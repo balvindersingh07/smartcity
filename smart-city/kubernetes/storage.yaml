@@ -5,6 +5,12 @@ metadata:
   namespace: smart-city
 spec:
   replicas: 1
+  progressDeadlineSeconds: 900
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: storage-service
