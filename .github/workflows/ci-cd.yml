@@ -135,9 +135,21 @@ jobs:
           kubectl apply -f smart-city/kubernetes/pdb.yaml
           kubectl apply -f smart-city/kubernetes/ingress.yaml
 
-      - name: Run smoke test
-        shell: pwsh
-        run: ./smart-city/ci-cd/smoke-test.ps1
+      - name: Wait for core deployments
+        run: |
+          kubectl rollout status deployment/storage-service -n smart-city --timeout=300s
+          kubectl rollout status deployment/notification-service -n smart-city --timeout=300s
+          kubectl rollout status deployment/api-service -n smart-city --timeout=300s
+
+      - name: Run smoke test (in-cluster)
+        run: |
+          set -e
+          for path in /health /metrics /sensors /alerts; do
+            echo "GET http://127.0.0.1:8004${path}"
+            kubectl exec -n smart-city deploy/api-service -- \
+              python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8004${path}', timeout=60).read()"
+          done
+          echo "Smoke test completed successfully."
 
   deploy-production:
     runs-on: ubuntu-latest
