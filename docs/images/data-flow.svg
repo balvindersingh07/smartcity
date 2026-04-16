@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="320" viewBox="0 0 880 320">
+  <defs>
+    <linearGradient id="dfbg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0B0F1A"/><stop offset="100%" style="stop-color:#151b2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#dfbg)" rx="12"/>
+  <text x="440" y="34" text-anchor="middle" fill="#EDF2FF" font-family="Segoe UI, sans-serif" font-size="18" font-weight="600">Data flow</text>
+  <text x="440" y="54" text-anchor="middle" fill="#9FB0D4" font-family="Segoe UI, sans-serif" font-size="11">Ingest ’ process ’ store ’ query / alert</text>
+  <!-- Steps -->
+  <g font-family="Segoe UI, sans-serif">
+    <rect x="40" y="100" width="140" height="80" rx="8" fill="#1e2a3d" stroke="#4FD1C5"/>
+    <text x="110" y="132" text-anchor="middle" fill="#EDF2FF" font-size="13" font-weight="600">1. Ingest</text>
+    <text x="110" y="152" text-anchor="middle" fill="#9FB0D4" font-size="10">JSON sensor payload</text>
+    <text x="110" y="168" text-anchor="middle" fill="#9FB0D4" font-size="10">POST /ingest</text>
+    <rect x="220" y="100" width="140" height="80" rx="8" fill="#1e2a3d" stroke="#FFC857"/>
+    <text x="290" y="132" text-anchor="middle" fill="#EDF2FF" font-size="13" font-weight="600">2. Kafka</text>
+    <text x="290" y="152" text-anchor="middle" fill="#9FB0D4" font-size="10">Publish events</text>
+    <text x="290" y="168" text-anchor="middle" fill="#9FB0D4" font-size="10">Topic partitioning</text>
+    <rect x="400" y="100" width="140" height="80" rx="8" fill="#1e2a3d" stroke="#7F5AF0"/>
+    <text x="470" y="132" text-anchor="middle" fill="#EDF2FF" font-size="13" font-weight="600">3. Process</text>
+    <text x="470" y="152" text-anchor="middle" fill="#9FB0D4" font-size="10">Filter / aggregate</text>
+    <text x="470" y="168" text-anchor="middle" fill="#9FB0D4" font-size="10">Anomaly detection</text>
+    <rect x="580" y="100" width="140" height="80" rx="8" fill="#1e2a3d" stroke="#2ECC71"/>
+    <text x="650" y="132" text-anchor="middle" fill="#EDF2FF" font-size="13" font-weight="600">4. Storage</text>
+    <text x="650" y="152" text-anchor="middle" fill="#9FB0D4" font-size="10">PostgreSQL</text>
+    <text x="650" y="168" text-anchor="middle" fill="#9FB0D4" font-size="10">Time-series rows</text>
+    <rect x="760" y="100" width="80" height="80" rx="8" fill="#1e2a3d" stroke="#FF4D4F"/>
+    <text x="800" y="138" text-anchor="middle" fill="#EDF2FF" font-size="12" font-weight="600">5.</text>
+    <text x="800" y="158" text-anchor="middle" fill="#EDF2FF" font-size="11">API +</text>
+    <text x="800" y="174" text-anchor="middle" fill="#EDF2FF" font-size="11">Notify</text>
+  </g>
+  <!-- Arrows between boxes -->
+  <path d="M180 140 L220 140" stroke="#9FB0D4" stroke-width="2" marker-end="url(#da)"/>
+  <path d="M360 140 L400 140" stroke="#9FB0D4" stroke-width="2" marker-end="url(#da)"/>
+  <path d="M540 140 L580 140" stroke="#9FB0D4" stroke-width="2" marker-end="url(#da)"/>
+  <path d="M720 140 L760 140" stroke="#9FB0D4" stroke-width="2" marker-end="url(#da)"/>
+  <defs><marker id="da" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#9FB0D4"/></marker></defs>
+  <text x="440" y="260" text-anchor="middle" fill="#6b7a99" font-family="Segoe UI, sans-serif" font-size="11">API exposes /metrics, /sensors, /alerts · Notification consumes Kafka for outbound alerts</text>
+</svg>
