@@ -70,21 +70,30 @@ async def consume_processed_events():
                 logger.exception("Failed to persist processed event: %s | event=%s", exc, event)
 
 
+async def _start_storage_consumer():
+    global consumer, consumer_task
+    try:
+        c = AIOKafkaConsumer(
+            PROCESSED_TOPIC,
+            bootstrap_servers=KAFKA_BOOTSTRAP,
+            group_id=CONSUMER_GROUP,
+            auto_offset_reset="latest",
+        )
+        await c.start()
+        consumer = c
+        consumer_task = asyncio.create_task(consume_processed_events())
+        logger.info("Storage consumer started")
+    except Exception:
+        logger.exception("Storage Kafka consumer failed to start")
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     global consumer, consumer_task
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    consumer = AIOKafkaConsumer(
-        PROCESSED_TOPIC,
-        bootstrap_servers=KAFKA_BOOTSTRAP,
-        group_id=CONSUMER_GROUP,
-        auto_offset_reset="latest",
-    )
-    await consumer.start()
-    consumer_task = asyncio.create_task(consume_processed_events())
-    logger.info("Storage consumer started")
+    asyncio.create_task(_start_storage_consumer())
     try:
         yield
     finally:

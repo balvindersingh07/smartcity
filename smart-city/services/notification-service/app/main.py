@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import json
+import logging
 from collections import deque
 from contextlib import asynccontextmanager
 from typing import Optional
@@ -11,6 +12,8 @@ from fastapi.responses import Response
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, generate_latest
 
 from .config import Settings
+
+logger = logging.getLogger("notification-service")
 settings = Settings()
 KAFKA_BOOTSTRAP = settings.kafka_bootstrap_servers
 ALERTS_TOPIC = settings.kafka_alerts_topic
@@ -30,17 +33,27 @@ async def consume_alerts():
         alerts_consumed_total.inc()
 
 
+async def _start_notification_consumer():
+    global consumer, consumer_task
+    try:
+        c = AIOKafkaConsumer(
+            ALERTS_TOPIC,
+            bootstrap_servers=KAFKA_BOOTSTRAP,
+            group_id=CONSUMER_GROUP,
+            auto_offset_reset="latest",
+        )
+        await c.start()
+        consumer = c
+        consumer_task = asyncio.create_task(consume_alerts())
+        logger.info("Notification consumer started")
+    except Exception:
+        logger.exception("Notification Kafka consumer failed to start")
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     global consumer, consumer_task
-    consumer = AIOKafkaConsumer(
-        ALERTS_TOPIC,
-        bootstrap_servers=KAFKA_BOOTSTRAP,
-        group_id=CONSUMER_GROUP,
-        auto_offset_reset="latest",
-    )
-    await consumer.start()
-    consumer_task = asyncio.create_task(consume_alerts())
+    asyncio.create_task(_start_notification_consumer())
     try:
         yield
     finally:
