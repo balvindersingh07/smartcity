@@ -137,6 +137,14 @@ jobs:
           kubectl apply -f smart-city/kubernetes/pdb.yaml
           kubectl apply -f smart-city/kubernetes/ingress.yaml
 
+      - name: Set service images (staging)
+        run: |
+          kubectl set image deployment/ingestion-service ingestion-service=ghcr.io/${{ github.repository_owner }}/smart-city-ingestion-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/processing-service processing-service=ghcr.io/${{ github.repository_owner }}/smart-city-processing-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/storage-service storage-service=ghcr.io/${{ github.repository_owner }}/smart-city-storage-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/api-service api-service=ghcr.io/${{ github.repository_owner }}/smart-city-api-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/notification-service notification-service=ghcr.io/${{ github.repository_owner }}/smart-city-notification-service:${{ github.sha }} -n smart-city
+
       - name: Wait for core deployments
         run: |
           kubectl rollout status deployment/postgres -n smart-city --timeout=300s
@@ -190,3 +198,11 @@ jobs:
           kubectl apply -f smart-city/kubernetes/hpa.yaml
           kubectl apply -f smart-city/kubernetes/pdb.yaml
           kubectl apply -f smart-city/kubernetes/ingress.yaml
+
+      - name: Set service images (production)
+        run: |
+          kubectl set image deployment/ingestion-service ingestion-service=ghcr.io/${{ github.repository_owner }}/smart-city-ingestion-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/processing-service processing-service=ghcr.io/${{ github.repository_owner }}/smart-city-processing-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/storage-service storage-service=ghcr.io/${{ github.repository_owner }}/smart-city-storage-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/api-service api-service=ghcr.io/${{ github.repository_owner }}/smart-city-api-service:${{ github.sha }} -n smart-city
+          kubectl set image deployment/notification-service notification-service=ghcr.io/${{ github.repository_owner }}/smart-city-notification-service:${{ github.sha }} -n smart-city
