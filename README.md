@@ -18,7 +18,7 @@ This file is the **GitHub repository home page** (root `README.md`). Application
 
 ## Project banner
 
-![Smart City banner](docs/images/banner.svg)
+![Smart City banner](docs/images/banner.png)
 
 ---
 
@@ -40,15 +40,17 @@ This file is the **GitHub repository home page** (root `README.md`). Application
 
 ### Microservices
 
-![Microservices architecture](docs/images/architecture-microservices.svg)
+![Microservices architecture](docs/images/architecture-microservices.png)
+
+*(Source: `docs/images/architecture-microservices.svg`. Re-export PNG: `python docs/images/export_svgs_to_png.py` — needs Chrome.)*
 
 ### Data flow
 
-![Data flow](docs/images/data-flow.svg)
+![Data flow](docs/images/data-flow.png)
 
 ### CI/CD and Azure
 
-![CI/CD and Azure](docs/images/cicd-azure.svg)
+![CI/CD and Azure](docs/images/cicd-azure.png)
 
 ---
 
@@ -114,21 +116,21 @@ Tests, Docker build, push to GHCR, deploy to AKS staging, then production.
 
 ```text
 .
-??? .github/workflows/ci-cd.yml
-??? docs/images/                 # Diagrams (SVG) and screenshots (PNG) for this README
-??? README.md                    # This file (GitHub home page)
-??? DESIGN_SYSTEM.md
-??? app.js, index.html, styles.css
-??? smart-city/
-?   ??? README.md                # Quick start inside the app folder
-?   ??? docker-compose.yml
-?   ??? services/                # microservices
-?   ??? frontend-react/
-?   ??? kubernetes/
-?   ??? terraform/
-?   ??? kafka/
-?   ??? ci-cd/
-??? submission/                  # Capstone DOCX generator (optional)
+├── .github/workflows/ci-cd.yml
+├── docs/images/               # Diagrams (SVG + exported PNG), screenshots, export_svgs_to_png.py
+├── README.md
+├── DESIGN_SYSTEM.md
+├── app.js, index.html, styles.css
+├── smart-city/
+│   ├── README.md
+│   ├── docker-compose.yml
+│   ├── services/
+│   ├── frontend-react/
+│   ├── kubernetes/
+│   ├── terraform/
+│   ├── kafka/
+│   └── ci-cd/
+└── submission/
 ```
 
 Folder-only quick reference: **[smart-city/README.md](smart-city/README.md)**
