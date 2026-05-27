@@ -4,7 +4,26 @@
 
 **Live repo:** [github.com/balvindersingh07/smartcity](https://github.com/balvindersingh07/smartcity)
 
-Production-style **distributed system** for real-time environmental sensor data: **microservices** (Python / FastAPI), **Kafka** streaming, **PostgreSQL**, **React** dashboard, **Docker**, **Kubernetes (AKS)** on **Azure**, with **GitHub Actions** CI/CD and images on **GHCR**.
+Production-style **distributed system** for real-time environmental sensor data: **microservices** (Python / FastAPI), **Kafka** streaming, **PostgreSQL**, **web dashboard**, **Docker**, **Kubernetes (AKS)** on **Azure**, with **GitHub Actions** CI/CD and images on **GHCR**.
+
+---
+
+## For college evaluators (start here)
+
+| Deliverable | Link |
+|-------------|------|
+| **Submission index** (report, code, diagrams, links) | [submission/README.md](submission/README.md) |
+| **Live frontend** | https://smartcity-mocha.vercel.app/ |
+| **API docs (staging)** | http://98.70.234.97:8004/docs |
+| **CI/CD runs** | [GitHub Actions](https://github.com/balvindersingh07/smartcity/actions) |
+| **Full project report** | [docs/PROJECT_REPORT.md](docs/PROJECT_REPORT.md) |
+| **Database design** | [docs/DATABASE_DESIGN.md](docs/DATABASE_DESIGN.md) |
+| **Stream processing** | [docs/STREAM_PROCESSING.md](docs/STREAM_PROCESSING.md) |
+| **Security & monitoring** | [docs/SECURITY_AND_MONITORING.md](docs/SECURITY_AND_MONITORING.md) |
+| **Cost analysis** | [docs/COST_ANALYSIS.md](docs/COST_ANALYSIS.md) |
+| **Video script (10–15 min)** | [docs/VIDEO_WALKTHROUGH.md](docs/VIDEO_WALKTHROUGH.md) |
+
+Copy report Markdown into Word/PDF for portal upload. Use PNG diagrams from [`docs/images/`](docs/images/) (Insert → Picture).
 
 This file is the **GitHub repository home page** (root `README.md`). Application code lives under [`smart-city/`](smart-city/).
 
@@ -27,7 +46,7 @@ This file is the **GitHub repository home page** (root `README.md`). Application
 | Layer | Technologies |
 |------|----------------|
 | Microservices | Python, FastAPI |
-| Frontend | React, Vite |
+| Frontend | HTML/CSS/JS dashboard (Vite), hosted on [Vercel](https://smartcity-mocha.vercel.app/) |
 | Messaging | Apache Kafka (Redpanda in cluster) |
 | Data | PostgreSQL |
 | Cloud | Azure (AKS, Container Registry, budgets, Application Insights) |
@@ -117,7 +136,14 @@ Tests, Docker build, push to GHCR, deploy to AKS staging, then production.
 ```text
 .
 ├── .github/workflows/ci-cd.yml
-├── docs/images/               # Diagrams (SVG + exported PNG), screenshots, export_svgs_to_png.py
+├── docs/
+│   ├── PROJECT_REPORT.md      # Capstone report
+│   ├── DATABASE_DESIGN.md
+│   ├── STREAM_PROCESSING.md
+│   ├── SECURITY_AND_MONITORING.md
+│   ├── COST_ANALYSIS.md
+│   ├── VIDEO_WALKTHROUGH.md
+│   └── images/                # Diagrams + screenshots (PNG)
 ├── README.md
 ├── DESIGN_SYSTEM.md
 ├── smart-city/
@@ -129,7 +155,7 @@ Tests, Docker build, push to GHCR, deploy to AKS staging, then production.
 │   ├── terraform/
 │   ├── kafka/
 │   └── ci-cd/
-└── submission/
+└── submission/                # Capstone submission index for evaluators
 ```
 
 Folder-only quick reference: **[smart-city/README.md](smart-city/README.md)**
@@ -161,13 +187,17 @@ npm run dev
 
 Open `http://localhost:5173` (API at `http://localhost:8004` when backend is running).
 
-Example ingest:
+Example ingest (PowerShell):
 
-```bash
-curl -X POST http://localhost:8001/ingest \
-  -H "Content-Type: application/json" \
-  -d '{"sensor_id":"sensor-001","type":"temperature","value":31.5,"timestamp":"2026-04-15T10:00:00Z","location_id":"zone-a"}'
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8001/ingest" -Method Post -ContentType "application/json" -Body '{"sensor_id":"demo-001","type":"temperature","value":29.5,"timestamp":"2026-05-27T12:00:00Z"}'
 ```
+
+---
+
+## Capstone submission
+
+All final submission items (report sections, diagrams, code paths, live URLs, video script) are indexed in **[submission/README.md](submission/README.md)**.
 
 ---
 
@@ -213,16 +243,7 @@ See [smart-city/terraform/README.md](smart-city/terraform/README.md).
 - Kubernetes RBAC and NetworkPolicies
 - Optional Log Analytics / Application Insights via Terraform
 
----
-
-## Capstone report (DOCX)
-
-```bash
-pip install python-docx
-python submission/generate_capstone_report_docx.py
-```
-
-Output: `submission/Smart_City_Environmental_Monitoring_Capstone_Report.docx`
+Details: [docs/SECURITY_AND_MONITORING.md](docs/SECURITY_AND_MONITORING.md)
 
 ---
 

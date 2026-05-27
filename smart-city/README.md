@@ -20,11 +20,13 @@ docker compose up --build
 | API | http://localhost:8004/docs |
 | Notification | http://localhost:8005/docs |
 
-**Frontend:**
+**Frontend (live):** https://smartcity-mocha.vercel.app/
 
 ```bash
 cd frontend-react && npm install && npm run dev
 ```
+
+**Capstone submission docs:** [../submission/README.md](../submission/README.md)
 
 **Database migrations (storage):**
 
