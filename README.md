@@ -106,7 +106,7 @@ Tests, Docker build, push to GHCR, deploy to AKS staging, then production.
 - **Services:** ingestion, processing, storage, API, notification (FastAPI)
 - **Streaming:** Kafka topics for sensor events and downstream processing
 - **Storage:** PostgreSQL (metadata and sensor time-series data)
-- **Frontend:** React dashboard (`smart-city/frontend-react`)
+- **Frontend:** Premium monitoring dashboard (`smart-city/frontend-react` — static HTML/CSS/JS)
 - **Kubernetes:** manifests under `smart-city/kubernetes/` (deps, network policies, HPA, ingress)
 - **CI/CD:** on push to `main`, build and push `ghcr.io/<owner>/smart-city-<service>:<sha>`, deploy to staging then production AKS
 
@@ -120,7 +120,6 @@ Tests, Docker build, push to GHCR, deploy to AKS staging, then production.
 ├── docs/images/               # Diagrams (SVG + exported PNG), screenshots, export_svgs_to_png.py
 ├── README.md
 ├── DESIGN_SYSTEM.md
-├── app.js, index.html, styles.css
 ├── smart-city/
 │   ├── README.md
 │   ├── docker-compose.yml
@@ -152,13 +151,15 @@ docker compose up --build
 | API | http://localhost:8004/docs |
 | Notification | http://localhost:8005/docs |
 
-Frontend dev:
+Frontend dev (dashboard):
 
 ```bash
 cd smart-city/frontend-react
 npm install
 npm run dev
 ```
+
+Open `http://localhost:5173` (API at `http://localhost:8004` when backend is running).
 
 Example ingest:
 

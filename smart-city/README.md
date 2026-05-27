@@ -1,6 +1,6 @@
 # Smart City application (`smart-city/`)
 
-This directory contains **Docker Compose**, **microservices**, **Kubernetes manifests**, **Terraform**, **Kafka** config, and the **React** frontend.
+This directory contains **Docker Compose**, **microservices**, **Kubernetes manifests**, **Terraform**, **Kafka** config, and the **monitoring dashboard** frontend.
 
 **Full documentation, diagrams, and all screenshots** (GitHub repo home page): **[`README.md` in the repository root](../README.md)**.
 
